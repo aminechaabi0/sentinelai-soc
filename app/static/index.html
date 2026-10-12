@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SentinelAI SOC</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">S</div><div><b>SentinelAI</b><small>SECURITY OPERATIONS</small></div></div>
+    <div class="workspace-label">WORKSPACE</div>
+    <button class="nav active" data-view="overview"><span>◫</span> Overview</button>
+    <button class="nav" data-view="events"><span>⌁</span> Security events <i id="nav-event-count">0</i></button>
+    <button class="nav" data-view="integrations"><span>⛓</span> Integrations</button>
+    <button class="nav" data-view="audit"><span>≡</span> Audit trail</button>
+    <div class="sidebar-bottom"><div class="sensor-status"><span class="pulse"></span><div><b>Console online</b><small id="health-text">Checking API…</small></div></div><div class="version">SENTINELAI SOC <span>v0.1.0</span></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div class="breadcrumbs">Workspace <span>/</span> <b id="crumb">Overview</b></div><div class="top-actions"><div class="live-label"><span class="pulse"></span> MONITORING CONSOLE</div><button class="icon-btn" title="Refresh data" id="refresh">↻</button><div class="avatar">SA</div></div></header>
+    <section class="content">
+      <div class="page-head"><div><div class="eyebrow">SECURITY OPERATIONS CENTER</div><h1 id="page-title">Security overview</h1><p id="page-subtitle">Your environment at a glance. Investigate signals, prioritize risk, and track response.</p></div><div class="head-actions"><button class="btn secondary" id="seed-demo">＋ Load demo events</button><button class="btn primary" id="export-events">⇩ Export events</button></div></div>
+      <div class="banner" id="demo-banner"><div class="banner-icon">ⓘ</div><div><b>Demo-ready workspace</b><p>Load sample events to explore the interface. Real telemetry appears only after you configure and connect an integration.</p></div><button id="dismiss-banner" aria-label="Dismiss">×</button></div>
+      <section id="overview-view">
+        <div class="metrics-grid">
+          <article class="metric"><div class="metric-top"><span>Total events</span><span class="metric-icon blue">⌁</span></div><div class="metric-value" id="m-total">—</div><div class="metric-foot">All ingested telemetry</div></article>
+          <article class="metric"><div class="metric-top"><span>Open incidents</span><span class="metric-icon violet">◉</span></div><div class="metric-value" id="m-open">—</div><div class="metric-foot">Not yet resolved</div></article>
+          <article class="metric"><div class="metric-top"><span>Critical alerts</span><span class="metric-icon red">⚑</span></div><div class="metric-value" id="m-critical">—</div><div class="metric-foot"><span class="dot red-dot"></span> Requires urgent triage</div></article>
+          <article class="metric"><div class="metric-top"><span>High severity</span><span class="metric-icon amber">↗</span></div><div class="metric-value" id="m-high">—</div><div class="metric-foot">Prioritize investigation</div></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel event-panel"><div class="panel-head"><div><h2>Recent security events</h2><p>Latest signals received by the platform</p></div><button class="text-btn" data-go="events">View all →</button></div><div id="recent-events" class="recent-list"><div class="empty">No events yet. Load demo events or connect a data source.</div></div></article>
+          <article class="panel"><div class="panel-head"><div><h2>Severity distribution</h2><p>Unresolved events</p></div><span class="subtle-pill">LIVE DATA</span></div><div id="severity-chart" class="severity-chart"><div class="empty">No event data available</div></div><div class="chart-legend"><span><i class="red-bg"></i>Critical</span><span><i class="orange-bg"></i>High</span><span><i class="yellow-bg"></i>Medium</span><span><i class="blue-bg"></i>Low / Info</span></div></article>
+        </div>
+        <article class="panel source-panel"><div class="panel-head"><div><h2>Telemetry sources</h2><p>Event volume by source</p></div><button class="text-btn" data-go="integrations">Configure sources →</button></div><div id="source-list" class="source-list"><div class="empty">No connected telemetry yet</div></div></article>
+      </section>
+      <section id="events-view" class="hidden"><article class="panel"><div class="panel-head wrap"><div><h2>Security events</h2><p>Review signals and manage incident status</p></div><div class="filters"><input id="event-search" placeholder="Search host, IP, title…"><select id="severity-filter"><option value="">All severities</option><option>critical</option><option>high</option><option>medium</option><option>low</option><option>info</option></select><select id="status-filter"><option value="">All statuses</option><option>open</option><option>investigating</option><option>resolved</option></select></div></div><div class="table-wrap"><table><thead><tr><th>SEVERITY</th><th>EVENT</th><th>SOURCE / HOST</th><th>SOURCE IP</th><th>TIME (UTC)</th><th>STATUS</th><th></th></tr></thead><tbody id="events-table"><tr><td colspan="7" class="empty">Loading events…</td></tr></tbody></table></div></article></section>
+      <section id="integrations-view" class="hidden"><div class="integration-grid"><article class="integration-card"><div class="integration-head"><div class="integration-logo wazuh">W</div><span class="status-tag">RECEIVER AVAILABLE</span></div><h2>Wazuh alerts</h2><p>Receive Wazuh alert JSON through a protected webhook. Your Wazuh manager must be configured to send alerts to this endpoint.</p><div class="endpoint"><small>POST ENDPOINT</small><code>/api/integrations/wazuh</code><button class="copy-btn" data-copy="/api/integrations/wazuh">Copy</button></div><div class="integration-meta"><span>Authentication</span><b>X-Webhook-Token</b></div><div class="integration-meta"><span>Mapping</span><b>Rule · Agent · IP · Timestamp</b></div><div class="card-note">Receiver code is implemented. A live Wazuh manager connection has not been configured or verified.</div></article>
+      <article class="integration-card"><div class="integration-head"><div class="integration-logo suricata">◈</div><span class="status-tag">INGEST ENDPOINT</span></div><h2>Suricata EVE JSON</h2><p>Forward individual EVE JSON records from an authorized sensor. This endpoint accepts one event object per request.</p><div class="endpoint"><small>POST ENDPOINT</small><code>/api/integrations/suricata</code><button class="copy-btn" data-copy="/api/integrations/suricata">Copy</button></div><div class="integration-meta"><span>Authentication</span><b>X-API-Key</b></div><div class="integration-meta"><span>Mapping</span><b>Signature · Event type · IPs</b></div><div class="card-note">HTTP ingestion is implemented. Continuous EVE file tailing and live sensor connectivity are not included.</div></article>
+      <article class="integration-card"><div class="integration-head"><div class="integration-logo ai-logo">✳</div><span class="status-tag" id="ai-status">OPTIONAL</span></div><h2>AI investigation</h2><p>Request an investigation summary for an event. Configure an OpenAI-compatible API endpoint and model in environment variables.</p><div class="integration-meta"><span>Provider</span><b>Server-side API</b></div><div class="integration-meta"><span>Privacy</span><b>Event details sent to provider</b></div><div class="card-note">Without AI_API_KEY, the app returns a clearly labelled template-based fallback, not an AI-generated analysis.</div></article></div>
+      <article class="panel setup-panel"><h2>Quick setup</h2><p>Keep secrets server-side. Do not expose API keys in frontend code or commit your .env file.</p><ol><li>Copy <code>.env.example</code> to <code>.env</code> and set strong random keys.</li><li>Start the API and open the dashboard in your browser.</li><li>Use the API key configured in your browser's session prompt.</li><li>Configure Wazuh or Suricata to forward events to the documented endpoints.</li><li>Test with a synthetic event first; verify mappings and timestamps before production use.</li></ol></article></section>
+      <section id="audit-view" class="hidden"><article class="panel"><div class="panel-head"><div><h2>Audit trail</h2><p>Recorded event creation and status changes</p></div><button class="btn secondary" id="refresh-audit">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>TIME</th><th>ACTION</th><th>EVENT ID</th><th>DETAILS</th></tr></thead><tbody id="audit-table"><tr><td colspan="4" class="empty">No audit entries</td></tr></tbody></table></div></article></section>
+      <footer>SentinelAI SOC <span>·</span> Defensive monitoring workspace <span>·</span> All timestamps displayed in UTC</footer>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast hidden"></div>
+<div id="detail-modal" class="modal hidden"><div class="modal-card"><div class="modal-head"><div><span class="eyebrow">EVENT INVESTIGATION</span><h2 id="modal-title">Event details</h2></div><button id="close-modal" class="icon-btn">×</button></div><div id="modal-body"></div><div class="modal-actions"><select id="modal-status"><option value="open">Open</option><option value="investigating">Investigating</option><option value="resolved">Resolved</option></select><button id="save-status" class="btn secondary">Update status</button><button id="investigate-ai" class="btn primary">✳ Investigate with AI</button></div></div></div>
+<script src="/static/app.js"></script>
+</body></html>

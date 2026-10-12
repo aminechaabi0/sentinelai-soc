@@ -1,0 +1,13 @@
+services:
+  sentinelai-soc:
+    build: .
+    container_name: sentinelai-soc
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - sentinel-data:/data
+volumes:
+  sentinel-data:
